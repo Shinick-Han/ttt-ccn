@@ -49,6 +49,15 @@ Still frames: [workspace review](docs/images/review-workspace.png),
 [changed review](docs/images/review-changed.png),
 [agent brief](docs/images/agent-brief.png).
 
+The same selection is available without TTT in ccn 0.28.0+:
+
+```console
+$ ccn brief . --baseline HEAD~1 --json
+```
+
+That is the reusable path when another agent or editor should consume the
+brief directly.
+
 ## Before / after
 
 TTT alone uses the full editor width. With `ttt-ccn` loaded, the same file gets
