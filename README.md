@@ -30,6 +30,13 @@ The captures use the same `src/main.c`, TTT v1.9.0, and ccn v0.27.0. Only the
 plugin differs. See the individual frames: [TTT alone](docs/images/ttt-alone.png)
 and [TTT + ttt-ccn](docs/images/ttt-with-ccn.png).
 
+### Animated demo
+
+The drawer auto-opens, closes with `Esc`, and reopens through
+`Ctrl+P` → `CCN: Open inspector`:
+
+![ttt-ccn animated demo](docs/images/ttt-ccn-demo.gif)
+
 ## Requirements
 
 - TTT **v1.9.0+**

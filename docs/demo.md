@@ -6,10 +6,15 @@ result without narration.
 ## Setup
 
 1. Install `ttt` and `ccn`.
-2. Copy this repository to `<demo-workspace>/plugins/ccn`.
+2. Copy this repository to `<demo-workspace>/plugins/ttt-ccn`.
 3. Put `demo/demo.c` at `<demo-workspace>/demo/demo.c`.
 4. From the demo workspace, run `vhs demo/ttt-ccn.tape` (from this repo) or
    reproduce the keystrokes manually.
+
+The checked-in `docs/images/ttt-ccn-demo.gif` was captured from actual TTT
+windows using `TTT_CONFIG_DIR` isolation, then rendered from the terminal
+buffer. It shows TTT alone, the auto-opened CCN drawer, closing with `Esc`,
+`Ctrl+P` → `CCN: Open inspector`, and the reopened drawer.
 
 ## Shot list
 
