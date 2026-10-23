@@ -1,0 +1,18 @@
+{
+  "name": "ccn",
+  "displayName": "CCN Complexity",
+  "author": "Shinick-Han",
+  "description": "McCabe complexity and function inspector for the active source file, backed by the ccn binary",
+  "repo": "https://github.com/Shinick-Han/ttt-ccn",
+  "version": "0.1.0",
+  "tags": [
+    "complexity",
+    "ccn",
+    "mccabe",
+    "c",
+    "cpp",
+    "rust",
+    "code-review",
+    "eda"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "ccn",
+  "displayName": "CCN Complexity",
+  "description": "Complexity and function inspector backed by the ccn binary.",
+  "version": "0.1.0",
+  "author": "Shinick-Han",
+  "entry": "init.lua",
+  "api": 1,
+  "permissions": {
+    "panel.drawer": true,
+    "commands": true,
+    "keybindings": true,
+    "editor.read": true,
+    "system.exec": ["ccn", "ccn.exe"],
+    "events.file": true
+  }
+}
