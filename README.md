@@ -49,7 +49,7 @@ Still frames: [workspace review](docs/images/review-workspace.png),
 [changed review](docs/images/review-changed.png),
 [agent brief](docs/images/agent-brief.png).
 
-The same selection is available without TTT in ccn 0.28.0+:
+The same selection is available without TTT in ccn 0.28.1+:
 
 ```console
 $ ccn brief . --baseline HEAD~1 --json
