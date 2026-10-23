@@ -5,8 +5,8 @@
 -- `ccn <file> --json` on the active file and renders the function list in a
 -- right-side drawer.
 --
--- Install: copy this directory to <workspace>/plugins/ccn (or
--- ~/.config/ttt/plugins/ccn on Unix) and run "CCN: Open inspector" from the
+-- Install: copy this directory to <workspace>/plugins/ttt-ccn (or
+-- ~/.config/ttt/plugins/ttt-ccn on Unix) and run "CCN: Open inspector" from the
 -- command palette. The plugin asks for the permissions declared in
 -- plugin.ttt.json.
 

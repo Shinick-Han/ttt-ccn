@@ -57,7 +57,7 @@ User-wide:
 
 ```powershell
 # Windows (run inside the cloned ttt-ccn directory)
-$dest = "$HOME\.config\ttt\plugins\ccn"
+$dest = "$HOME\.config\ttt\plugins\ttt-ccn"
 New-Item -ItemType Directory $dest -Force | Out-Null
 Copy-Item .\* $dest -Recurse -Force
 ```
@@ -65,14 +65,14 @@ Copy-Item .\* $dest -Recurse -Force
 ```sh
 # Linux / macOS
 mkdir -p ~/.config/ttt/plugins
-cp -R . ~/.config/ttt/plugins/ccn
+cp -R . ~/.config/ttt/plugins/ttt-ccn
 ```
 
 Workspace-local:
 
 ```powershell
 New-Item -ItemType Directory .\plugins -Force
-Copy-Item -Recurse C:\path\to\ttt-ccn .\plugins\ccn
+Copy-Item -Recurse C:\path\to\ttt-ccn .\plugins\ttt-ccn
 ```
 
 Then start TTT from the workspace:

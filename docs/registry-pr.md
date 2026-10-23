@@ -13,7 +13,7 @@ The TTT plugin browser reads entries from `community-plugins.json` in
 
 ```diff
 +  {
-+    "name": "ccn",
++    "name": "ttt-ccn",
 +    "displayName": "CCN Complexity",
 +    "author": "Shinick-Han",
 +    "description": "McCabe complexity and function inspector for the active source file, backed by the ccn binary",
