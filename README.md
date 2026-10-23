@@ -19,6 +19,17 @@ max CCN 4 · 3 functions · 0 over 10
 Click a function to jump to its line. The drawer refreshes after opening or
 saving a file and adds a compact `CCN <max> · <n> hot` status item.
 
+## Before / after
+
+TTT alone uses the full editor width. With `ttt-ccn` loaded, the same file gets
+a live CCN inspector in the right drawer:
+
+![TTT alone versus TTT with the ttt-ccn plugin](docs/images/before-after.png)
+
+The captures use the same `src/main.c`, TTT v1.9.0, and ccn v0.27.0. Only the
+plugin differs. See the individual frames: [TTT alone](docs/images/ttt-alone.png)
+and [TTT + ttt-ccn](docs/images/ttt-with-ccn.png).
+
 ## Requirements
 
 - TTT **v1.9.0+**
