@@ -1,44 +1,39 @@
-# Demo scenario (15 seconds)
+# Demo scenario
 
-Use this to record the README GIF with VHS. It should show the problem and the
-result without narration.
+Use this to record the README GIF with VHS, or reproduce the keystrokes in a
+real TTT window.
 
 ## Setup
 
-1. Install `ttt` and `ccn`.
+1. Install `ttt`, `ccn` (v0.27.0+) and Git.
 2. Copy this repository to `<demo-workspace>/plugins/ttt-ccn`.
-3. Put `demo/demo.c` at `<demo-workspace>/demo/demo.c`.
-4. From the demo workspace, run `vhs demo/ttt-ccn.tape` (from this repo) or
-   reproduce the keystrokes manually.
+3. Put `demo/complex.c` and `demo/demo.c` in the workspace.
+4. From the demo workspace, run `ttt . demo/complex.c`.
 
-The checked-in `docs/images/ttt-ccn-demo.gif` was captured from actual TTT
-windows using `TTT_CONFIG_DIR` isolation, then rendered from the terminal
-buffer. It shows TTT alone, the auto-opened CCN drawer, closing with `Esc`,
-`Ctrl+P` → `CCN: Open inspector`, and the reopened drawer.
+The checked-in review captures use TTT's `TTT_CONFIG_DIR` isolation so the
+before/after sessions do not share plugin configuration.
 
-## Shot list
+## Review shot list
 
-| Time | Screen | Action |
+| Step | Screen | Action |
 |---|---|---|
-| 0-2s | TTT with `demo.c` open, CCN drawer on the right | Start on the finished view; no setup |
-| 2-4s | Drawer shows `max CCN 4 · 3 functions · 0 over 10` | Hold so it is readable |
-| 4-7s | Function list | Move selection to `process L3 4` |
-| 7-9s | Editor jumps to line 3 | Click/Enter the `process` row |
-| 9-12s | Save (`Ctrl+S`) | Drawer status briefly shows `CCN ...`, then settles |
-| 12-15s | Finished state | Hold on the drawer + function list |
+| 1 | File inspector | Open `complex.c`; drawer shows `max CCN 21 · 2 functions · 1 over 10` |
+| 2 | Workspace review | `Alt+R` or `CCN: Review workspace`; `complex.c:classify L3` is first |
+| 3 | Changed review | `CCN: Review changed (HEAD~1)`; row shows `+19` and the baseline revision |
+| 4 | Agent brief | `CCN: Preview agent brief`; shows the metrics and source snippet |
+| 5 | Copy | `CCN: Copy agent brief`; status says `CCN agent brief copied` |
 
-## README copy
+The `demo/ttt-ccn.tape` file records the original file-inspector flow. Review
+mode is captured in `docs/images/` from actual TTT sessions rendered from the
+terminal buffer.
 
-The static screenshot in the README is intentionally text-first:
+## Fixtures
 
-```text
-CCN · main.c
-max CCN 4 · 3 functions · 0 over 10
-
-process  L3  4
-simple   L12 1
-main     L14 1
-```
+- `demo/demo.c` — three low-complexity functions for the file list.
+- `demo/complex.c` — `classify` at CCN 21, nesting 6; good for review mode.
+- For changed review, commit a simple version of `complex.c`, then edit it into
+  the CCN 21 version without committing.
 
 Keep the GIF under ~5 MB. A silent, short loop works better than a narrated
 screen recording for a plugin listing.
+

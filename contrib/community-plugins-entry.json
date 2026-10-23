@@ -2,9 +2,9 @@
   "name": "ttt-ccn",
   "displayName": "CCN Complexity",
   "author": "Shinick-Han",
-  "description": "McCabe complexity and function inspector for the active source file, backed by the ccn binary",
+  "description": "Workspace complexity review, changed-function review, and agent briefs backed by the ccn binary",
   "repo": "https://github.com/Shinick-Han/ttt-ccn",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "tags": [
     "complexity",
     "ccn",

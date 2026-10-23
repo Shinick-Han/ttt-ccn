@@ -16,12 +16,12 @@ The TTT plugin browser reads entries from `community-plugins.json` in
 +    "name": "ttt-ccn",
 +    "displayName": "CCN Complexity",
 +    "author": "Shinick-Han",
-+    "description": "McCabe complexity and function inspector for the active source file, backed by the ccn binary",
++    "description": "Workspace complexity review, changed-function review, and agent briefs backed by the ccn binary",
 +    "repo": "https://github.com/Shinick-Han/ttt-ccn",
-+    "version": "0.1.0",
++    "version": "0.2.0",
 +    "tags": ["complexity", "ccn", "mccabe", "c", "cpp", "rust", "code-review", "eda"]
 +  }
-```
++```
 
 `featured` is maintainer-curated. The PR may ask for consideration, but the
 entry should remain `featured: false` unless the maintainer adds it.
@@ -29,7 +29,7 @@ entry should remain `featured: false` unless the maintainer adds it.
 ## Suggested PR title
 
 ```text
-Add CCN Complexity plugin (McCabe inspector for active file)
+Add CCN Complexity plugin (workspace review + agent brief)
 ```
 
 ## Suggested PR body
@@ -38,28 +38,34 @@ Add CCN Complexity plugin (McCabe inspector for active file)
 ## Plugin
 
 - Repo: https://github.com/Shinick-Han/ttt-ccn
-- Version: 0.1.0
+- Version: 0.2.0
 - TTT requirement: v1.9.0+
-- External requirement: ccn v0.27.0+ on PATH
+- External requirement: ccn v0.27.0+ on PATH; Git for changed review
 
 ## What it does
 
-Adds a right-side "CCN" drawer for the active source file. It runs
-`ccn <file> --json` asynchronously and shows the file's max CCN, function
-count, `>10` count, and a clickable function list. A status item shows
-`CCN <max> · <n> hot`.
+Adds three complexity-review surfaces inside TTT:
 
-The plugin requests only drawer/commands/keybindings/editor read/file events
-and allow-listed execution of `ccn`; it does not write files or use the
-network.
+- file inspector for the active source file
+- workspace review: every measured function sorted by CCN, click to jump
+- changed review: functions added or worsened since `HEAD~1`
+- agent brief: top functions, metrics, baseline reasons and capped source
+  snippets copied as Markdown
+
+The plugin requests drawer/commands/keybindings/editor read/file events,
+workspace file reads for snippets, and allow-listed execution of `ccn` and
+`git`. It does not write files or use the network.
 
 ## Verification
 
 - Tested against TTT v1.9.0 on Windows.
-- Tested with a small C fixture: drawer shows `max CCN 4 · 3 functions`,
-  function rows `process L3 4`, `simple L12 1`, `main L14 1`.
-- Missing `ccn` and unsaved `untitled` buffers fail with a message rather than
-  crashing.
+- `demo/complex.c` contains a CCN 21 function; file mode reports
+  `max CCN 21 · 2 functions · 1 over 10`.
+- Workspace review lists `complex.c:classify L3 21` first.
+- Changed review against a committed simple version reports `+19`.
+- `CCN: Preview agent brief` renders the snippet without leaving TTT.
+- Missing `ccn`, non-Git workspaces and unsaved buffers fail with a message
+  rather than crashing.
 ```
 
 ## After merge

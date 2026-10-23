@@ -3,21 +3,51 @@
 **McCabe complexity and function inspection inside [TTT](https://github.com/eugenioenko/ttt).**
 
 TTT already provides the terminal IDE: editor, LSP, Git, terminal, file tree and
-a right-side drawer. This plugin adds a CCN inspector for the active file by
-running the [`ccn`](https://github.com/Shinick-Han/ccn) binary.
+a right-side drawer. This plugin adds complexity review on top of the
+[`ccn`](https://github.com/Shinick-Han/ccn) binary:
+
+- **File inspector** for the active file.
+- **Workspace review** sorted by CCN across the repository.
+- **Changed review** for functions added or worsened since a Git baseline.
+- **Agent brief** that copies the top functions and their source ranges as
+  Markdown, so an agent can start from pre-processed context.
 
 ```text
-CCN · main.c
-max CCN 4 · 3 functions · 0 over 10
-┌─────────────────────────────────────┐
-│ process  L3   4                     │
-│ simple   L12  1                     │
-│ main     L14  1                     │
-└─────────────────────────────────────┘
+CCN review · workspace
+5 files · 5 functions · 1 over 10
+! complex.c:classify  L3   21
+  main.c:process      L3    4
+  complex.c:main      L35   1
 ```
 
-Click a function to jump to its line. The drawer refreshes after opening or
-saving a file and adds a compact `CCN <max> · <n> hot` status item.
+Click a row to jump to its line. `!` marks functions above CCN 10. The status
+item stays compact (`CCN review · 1 hot`).
+
+## Review mode
+
+Open the palette and run:
+
+| Command | Purpose |
+|---|---|
+| `CCN: Review workspace` / `Alt+R` | Rank every measured function in the workspace |
+| `CCN: Review changed (HEAD~1)` | Show functions added or worsened since `HEAD~1` |
+| `CCN: Preview agent brief` | Render the current brief in the drawer |
+| `CCN: Copy agent brief` | Copy the top functions, metrics, reasons and source snippets as Markdown |
+
+`Copy agent brief` is deliberately mechanical: it reads the source ranges from
+`ccn`'s JSON, caps the brief at 8 functions and 100 lines per function, and puts
+it on the clipboard. It does not call an LLM or modify the workspace.
+
+### Review demo
+
+The same `complex.c` has `classify` at CCN 21. This loop shows file inspection,
+workspace review, changed review, brief preview and copy:
+
+![ttt-ccn review demo](docs/images/ttt-ccn-review.gif)
+
+Still frames: [workspace review](docs/images/review-workspace.png),
+[changed review](docs/images/review-changed.png),
+[agent brief](docs/images/agent-brief.png).
 
 ## Before / after
 
@@ -30,7 +60,7 @@ The captures use the same `src/main.c`, TTT v1.9.0, and ccn v0.27.0. Only the
 plugin differs. See the individual frames: [TTT alone](docs/images/ttt-alone.png)
 and [TTT + ttt-ccn](docs/images/ttt-with-ccn.png).
 
-### Animated demo
+### File inspector demo
 
 The drawer auto-opens, closes with `Esc`, and reopens through
 `Ctrl+P` → `CCN: Open inspector`:
@@ -43,6 +73,8 @@ The drawer auto-opens, closes with `Esc`, and reopens through
 - ccn **v0.27.0+** on `PATH`:
   - `npm install -g @shinick/ccn`
   - or download a release from <https://github.com/Shinick-Han/ccn/releases>
+- Git on `PATH` for `Review changed` (`HEAD~1`); workspace review also works
+  without Git and falls back to the active file's directory.
 - A supported source file: C, C++, C#, Go, Java, JavaScript/JSX, Python, Rust,
   TypeScript/TSX.
 
@@ -106,9 +138,13 @@ The inspector opens automatically for the first supported source file. Use
 
 | Input | Action |
 |---|---|
-| `Ctrl+K C` | Open the CCN inspector |
-| `Ctrl+P` → `CCN: Open inspector` | Open/reopen the drawer |
-| `Ctrl+P` → `CCN: Refresh` | Re-run ccn for the active file |
+| `Alt+C` | Open the file inspector |
+| `Alt+R` | Open the workspace review |
+| `Ctrl+P` → `CCN: Review workspace` | Rank workspace functions by CCN |
+| `Ctrl+P` → `CCN: Review changed (HEAD~1)` | Show new/worsened functions since `HEAD~1` |
+| `Ctrl+P` → `CCN: Copy agent brief` | Copy the current review as an agent brief |
+| `Ctrl+P` → `CCN: Open inspector` | Open/reopen the file drawer |
+| `Ctrl+P` → `CCN: Refresh` | Re-run the active view |
 | `Ctrl+P` → `CCN: Close inspector` | Close the drawer |
 | `Esc` | Close the drawer |
 | Click a function row | Jump to that function's line |
@@ -117,42 +153,52 @@ The inspector opens automatically for the first supported source file. Use
 ## How it works
 
 1. TTT reports the active file path.
-2. The plugin runs `ccn <absolute-path> --json` asynchronously.
-3. It reads the file-level `ccn.max`, `ccn.over_10` and `ccn.detail` fields.
-4. The function list is sorted by CCN and rendered in a right drawer.
+2. File mode runs `ccn <absolute-path> --json` asynchronously.
+3. Workspace review finds the Git root, runs `ccn <root> --json`, and flattens
+   every `files[].ccn.detail[]` entry into one CCN-sorted list.
+4. Changed review runs `ccn <root> --report-json --baseline HEAD~1` and reads
+   `baseline.changes` (`ccn`, `base_ccn`, `kind`, `reasons`, line range).
+5. The agent brief reads the source ranges and copies a capped Markdown digest.
+6. The drawer renders the active list; clicking a row calls `ttt.open_file`.
 
-It does not write files, access the network, or change the editor buffer. The
-manifest requests only:
+It does not write workspace files, access the network, or change the editor
+buffer. The manifest requests only:
 
 - `panel.drawer`
 - `commands`
 - `keybindings`
 - `editor.read`
+- `fs.read` for source snippets in the workspace
 - `events.file`
-- `system.exec` for `ccn` / `ccn.exe`
+- `system.exec` for `ccn` / `ccn.exe` and `git` / `git.exe`
 
 ## Demo
 
-A 15-second recording outline lives in [`docs/demo.md`](docs/demo.md). It shows:
+A recording outline lives in [`docs/demo.md`](docs/demo.md). The repository
+contains two fixtures:
 
-```text
-open a C file → right CCN drawer → click the hottest function → save → refresh
-```
+- `demo/demo.c` — the original small file for the file inspector.
+- `demo/complex.c` — a deliberately gnarly function (`classify`, CCN 21) for
+  review mode.
 
-`demo/demo.c` is the small fixture used by the recording; `demo/ttt-ccn.tape`
-can regenerate the GIF with [VHS](https://github.com/charmbracelet/vhs).
+`demo/ttt-ccn.tape` is the VHS scenario for the file inspector; review-mode
+captures are in `docs/images/`.
 
 ## Limitations
 
-This is an inspector, not a full CCN review product yet.
+This is still a review spike, not a full code-review product.
 
-- File-level detail only; no repository-wide review queue in the drawer.
-- No baseline, Perforce changelist, or review comments yet.
+- Workspace review scans the whole Git root and can be slow on very large repos;
+  `ccn`'s cache helps after the first run.
+- Changed review is fixed to `HEAD~1`; Perforce changelists and arbitrary
+  revisions are not exposed in the UI yet.
+- The drawer shows sorted rows and a warning summary, not a full diff or inline
+  annotations. `ccn lsp` remains the better surface for inline diagnostics.
 - ccn's grammar support and heuristic limits apply unchanged.
 - An unsaved `untitled` buffer is reported as an error rather than analyzed.
 
-The next planned steps are a changed-file review drawer, baseline/P4 support,
-and opening the diff for a hot function from the inspector.
+The next useful step is to pick the baseline revision from the palette, then
+add an explicit "insert brief into an agent terminal" action.
 
 ## Development
 
@@ -166,3 +212,4 @@ fastest development loop; do not edit the installed user copy.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
